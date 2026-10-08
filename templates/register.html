@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create a secure PhishGuard account to access phishing detection tools, threat intelligence, and personal URL scan history.">
+  <title>Create Your Account — PhishGuard</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- 1. NAVIGATION BAR                                         -->
+  <!-- ========================================================= -->
+  <header class="site-header" id="top">
+    <div class="container nav-container">
+      <!-- Brand Logo / Name -->
+      <a href="/" class="brand-logo" aria-label="PhishGuard Home">
+        <div class="logo-icon-wrapper">
+          <svg class="logo-shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="brand-text">Phish<span class="brand-highlight">Guard</span></span>
+      </a>
+
+      <!-- Mobile Navigation Hamburger Button -->
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <!-- Navigation Links -->
+      <nav class="nav-menu" id="navMenu">
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/#how-it-works" class="nav-link">How It Works</a></li>
+          <li><a href="/#features" class="nav-link">Features</a></li>
+          <li><a href="/#about" class="nav-link">About</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="/login" class="btn btn-ghost" id="navLoginBtn">Login</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- 2. REGISTRATION SECTION                                   -->
+  <!-- ========================================================= -->
+  <main class="auth-section">
+    <div class="container auth-container">
+      
+      <!-- Registration Form Card -->
+      <div class="auth-card" id="formCard" {% if success %}style="display: none;"{% endif %}>
+        <div class="auth-header">
+          <h1 class="auth-title">Create your account</h1>
+          <p class="auth-subtitle">
+            Join PhishGuard to monitor suspicious links, access intelligent threat detection, and keep track of your URL scan history.
+          </p>
+        </div>
+
+        <!-- Server-side or AJAX Alert Message -->
+        <div class="form-alert {% if errors and errors.general %}alert-danger visible{% elif success %}alert-success visible{% endif %}" id="formAlert" role="alert">
+          <svg class="form-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="formAlertText">
+            {% if errors and errors.general %}
+              {{ errors.general }}
+            {% elif success %}
+              {{ message }}
+            {% endif %}
+          </span>
+        </div>
+
+        <!-- Registration Form -->
+        <form action="/register" method="POST" class="auth-form" id="registerForm" novalidate>
+          
+          <!-- Full Name Field -->
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                class="form-input {% if errors and errors.name %}is-invalid{% endif %}" 
+                placeholder="e.g. Alex Morgan" 
+                value="{{ form_data.name if form_data else '' }}"
+                autocomplete="name" 
+                required
+              >
+            </div>
+            <div class="field-error {% if errors and errors.name %}visible{% endif %}" id="nameError">
+              <svg class="field-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span class="error-text">{{ errors.name if errors and errors.name else '' }}</span>
+            </div>
+          </div>
+
+          <!-- Email Address Field -->
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="form-input {% if errors and errors.email %}is-invalid{% endif %}" 
+                placeholder="name@example.com" 
+                value="{{ form_data.email if form_data else '' }}"
+                autocomplete="email" 
+                required
+              >
+            </div>
+            <div class="field-error {% if errors and errors.email %}visible{% endif %}" id="emailError">
+              <svg class="field-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span class="error-text">{{ errors.email if errors and errors.email else '' }}</span>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-input has-toggle {% if errors and errors.password %}is-invalid{% endif %}" 
+                placeholder="At least 8 characters" 
+                autocomplete="new-password" 
+                required
+              >
+              <button type="button" class="input-toggle" id="togglePassword" aria-label="Show password">
+                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="password-requirements" id="reqLength">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;">
+                <circle cx="12" cy="12" r="10"></circle>
+              </svg>
+              <span>Minimum 8 characters</span>
+            </div>
+            <div class="field-error {% if errors and errors.password %}visible{% endif %}" id="passwordError">
+              <svg class="field-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span class="error-text">{{ errors.password if errors and errors.password else '' }}</span>
+            </div>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="form-group">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+              <input 
+                type="password" 
+                id="confirm_password" 
+                name="confirm_password" 
+                class="form-input has-toggle {% if errors and errors.confirm_password %}is-invalid{% endif %}" 
+                placeholder="Re-enter your password" 
+                autocomplete="new-password" 
+                required
+              >
+              <button type="button" class="input-toggle" id="toggleConfirmPassword" aria-label="Show password">
+                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="field-error {% if errors and errors.confirm_password %}visible{% endif %}" id="confirmPasswordError">
+              <svg class="field-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span class="error-text">{{ errors.confirm_password if errors and errors.confirm_password else '' }}</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+            <span class="btn-spinner"></span>
+            <span class="btn-text">Create Account</span>
+            <svg class="btn-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </form>
+
+        <!-- Login Prompt Footer Link -->
+        <div class="auth-footer-prompt">
+          Already have an account? <a href="/login" class="auth-link">Log in</a>
+        </div>
+      </div>
+
+      <!-- Registration Success Card -->
+      <div class="auth-card success-card {% if success %}visible{% endif %}" id="successCard">
+        <div class="success-icon-wrapper">
+          <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <h2 class="success-title">Account Created!</h2>
+        <p class="success-description">
+          Your PhishGuard account has been successfully created with cryptographic password protection. You can now proceed to log in to access your scanning dashboard.
+        </p>
+        <div class="success-actions">
+          <a href="/login" class="btn btn-primary btn-block" id="proceedToLoginBtn">
+            Proceed to Login
+            <svg class="btn-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+          <a href="/" class="btn btn-secondary btn-block">Return to Home</a>
+        </div>
+      </div>
+
+
+    </div>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- 3. FOOTER (Matching Page 1)                               -->
+  <!-- ========================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <!-- Col 1: Brand & Description -->
+      <div class="footer-brand-col">
+        <a href="/" class="brand-logo footer-logo">
+          <div class="logo-icon-wrapper">
+            <svg class="logo-shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <span class="brand-text">Phish<span class="brand-highlight">Guard</span></span>
+        </a>
+        <p class="footer-desc">
+          An intelligent cybersecurity solution dedicated to proactive phishing URL detection 
+          through feature analysis and machine learning pattern recognition.
+        </p>
+      </div>
+
+      <!-- Col 2: Navigation Links -->
+      <div class="footer-links-col">
+        <h4 class="footer-heading">Navigation</h4>
+        <ul class="footer-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#about">About</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Resources -->
+      <div class="footer-links-col">
+        <h4 class="footer-heading">Resources</h4>
+        <ul class="footer-nav">
+          <li>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="github-link">
+              <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              GitHub Repository
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Copyright Sub-Footer -->
+    <div class="footer-bottom">
+      <div class="container footer-bottom-flex">
+        <p class="copyright-text">
+          &copy; 2026 PhishGuard — Phishing URL Detection
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='register.js') }}"></script>
+</body>
+</html>

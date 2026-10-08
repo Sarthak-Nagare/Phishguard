@@ -1,0 +1,624 @@
+{
+  "model_version": "1.0",
+  "selected_algorithm": "HistGradientBoosting",
+  "model_path": "models/phishguard_model.joblib",
+  "feature_count": 41,
+  "feature_names": [
+    "url_length",
+    "hostname_length",
+    "path_length",
+    "query_length",
+    "fragment_length",
+    "dot_count",
+    "subdomain_count",
+    "path_segment_count",
+    "query_param_count",
+    "digit_count",
+    "percentage_numeric_chars",
+    "hyphen_count",
+    "has_hyphen_in_domain",
+    "special_char_count",
+    "at_symbol_count",
+    "suspicious_separator_count",
+    "consecutive_char_repeat_max",
+    "has_repeated_char_run",
+    "domain_name_length",
+    "domain_entropy",
+    "hostname_entropy",
+    "url_entropy",
+    "suspicious_subdomain_structure",
+    "unusual_domain_patterns",
+    "has_ip_address",
+    "tld_length",
+    "tld_popularity",
+    "https_flag",
+    "suspicious_scheme",
+    "percent_encoding_count",
+    "has_encoded_chars",
+    "suspicious_file_extension",
+    "suspicious_keyword_count",
+    "keyword_in_domain",
+    "keyword_in_path",
+    "has_leetspeak_substitution",
+    "min_brand_edit_distance",
+    "is_brand_typo",
+    "brand_in_subdomain_or_path",
+    "suspicious_hyphen_brand",
+    "vowel_consonant_ratio"
+  ],
+  "results_held_out": {
+    "Logistic Regression": {
+      "train_time": 0.479,
+      "test_accuracy": 0.9981660470879802,
+      "phishing_precision": 0.9989754098360656,
+      "phishing_recall": 0.9981100874084574,
+      "phishing_f1": 0.9985425611533462,
+      "roc_auc": 0.9999378539978481,
+      "false_negatives": 24,
+      "false_positives": 13,
+      "confusion_matrix": [
+        [
+          12675,
+          24
+        ],
+        [
+          13,
+          7463
+        ]
+      ]
+    },
+    "Random Forest": {
+      "train_time": 2.217,
+      "test_accuracy": 0.9996034696406444,
+      "phishing_precision": 0.9995276706289853,
+      "phishing_recall": 0.9998425072840381,
+      "phishing_f1": 0.9996850641681757,
+      "roc_auc": 0.9999976300253417,
+      "false_negatives": 2,
+      "false_positives": 6,
+      "confusion_matrix": [
+        [
+          12697,
+          2
+        ],
+        [
+          6,
+          7470
+        ]
+      ]
+    },
+    "HistGradientBoosting": {
+      "train_time": 2.317,
+      "test_accuracy": 0.9997026022304832,
+      "phishing_precision": 0.999606392190821,
+      "phishing_recall": 0.999921253642019,
+      "phishing_f1": 0.9997637981261318,
+      "roc_auc": 0.9999953337832284,
+      "false_negatives": 1,
+      "false_positives": 5,
+      "confusion_matrix": [
+        [
+          12698,
+          1
+        ],
+        [
+          5,
+          7471
+        ]
+      ]
+    }
+  },
+  "unseen_generalization": {
+    "Logistic Regression": {
+      "score": "16/18",
+      "accuracy_pct": 88.88888888888889,
+      "details": [
+        {
+          "url": "https://youtube.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0011,
+          "legitimate_prob": 0.9989,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://google.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0012,
+          "legitimate_prob": 0.9988,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://facebook.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0029,
+          "legitimate_prob": 0.9971,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://microsoft.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0024,
+          "legitimate_prob": 0.9976,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://apple.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0005,
+          "legitimate_prob": 0.9995,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://amazon.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0014,
+          "legitimate_prob": 0.9986,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Phishing",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.1438,
+          "legitimate_prob": 0.8562,
+          "correct": true,
+          "note": "Benign multi-segment path"
+        },
+        {
+          "url": "https://github.com/torvalds/linux",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0152,
+          "legitimate_prob": 0.9848,
+          "correct": true,
+          "note": "Benign developer platform"
+        },
+        {
+          "url": "https://youtubee.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9993,
+          "legitimate_prob": 0.0007,
+          "correct": true,
+          "note": "Typo with extra letter e"
+        },
+        {
+          "url": "https://yooutube.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9441,
+          "legitimate_prob": 0.0559,
+          "correct": true,
+          "note": "Typo with double o"
+        },
+        {
+          "url": "https://gooogle.com",
+          "expected": "Phishing",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0219,
+          "legitimate_prob": 0.9781,
+          "correct": false,
+          "note": "Typo with triple o"
+        },
+        {
+          "url": "https://faceboook.com",
+          "expected": "Phishing",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0489,
+          "legitimate_prob": 0.9511,
+          "correct": false,
+          "note": "Typo with triple o"
+        },
+        {
+          "url": "https://microsoft-login-example.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Brand + hyphen + login keyword"
+        },
+        {
+          "url": "https://youtube-login-example.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Brand + hyphen + login keyword"
+        },
+        {
+          "url": "http://192.168.1.100/admin/login.php",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Raw IP address with admin login"
+        },
+        {
+          "url": "http://paypal.com.account-verify-update.security-login.xyz/auth",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Compound deceptive subdomains"
+        },
+        {
+          "url": "https://secure-banking-portal-update.com/signin?session=98213",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Multiple credential keywords"
+        },
+        {
+          "url": "https://xkcd983274921-secure-node.biz",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Random-looking DGA domain"
+        }
+      ]
+    },
+    "Random Forest": {
+      "score": "18/18",
+      "accuracy_pct": 100.0,
+      "details": [
+        {
+          "url": "https://youtube.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0391,
+          "legitimate_prob": 0.9609,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://google.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0625,
+          "legitimate_prob": 0.9375,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://facebook.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0601,
+          "legitimate_prob": 0.9399,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://microsoft.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0892,
+          "legitimate_prob": 0.9108,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://apple.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.059,
+          "legitimate_prob": 0.941,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://amazon.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0612,
+          "legitimate_prob": 0.9388,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Phishing",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.1022,
+          "legitimate_prob": 0.8978,
+          "correct": true,
+          "note": "Benign multi-segment path"
+        },
+        {
+          "url": "https://github.com/torvalds/linux",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.217,
+          "legitimate_prob": 0.783,
+          "correct": true,
+          "note": "Benign developer platform"
+        },
+        {
+          "url": "https://youtubee.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9722,
+          "legitimate_prob": 0.0278,
+          "correct": true,
+          "note": "Typo with extra letter e"
+        },
+        {
+          "url": "https://yooutube.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9322,
+          "legitimate_prob": 0.0678,
+          "correct": true,
+          "note": "Typo with double o"
+        },
+        {
+          "url": "https://gooogle.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.8334,
+          "legitimate_prob": 0.1666,
+          "correct": true,
+          "note": "Typo with triple o"
+        },
+        {
+          "url": "https://faceboook.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.8109,
+          "legitimate_prob": 0.1891,
+          "correct": true,
+          "note": "Typo with triple o"
+        },
+        {
+          "url": "https://microsoft-login-example.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Brand + hyphen + login keyword"
+        },
+        {
+          "url": "https://youtube-login-example.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Brand + hyphen + login keyword"
+        },
+        {
+          "url": "http://192.168.1.100/admin/login.php",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Raw IP address with admin login"
+        },
+        {
+          "url": "http://paypal.com.account-verify-update.security-login.xyz/auth",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.99,
+          "legitimate_prob": 0.01,
+          "correct": true,
+          "note": "Compound deceptive subdomains"
+        },
+        {
+          "url": "https://secure-banking-portal-update.com/signin?session=98213",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.8015,
+          "legitimate_prob": 0.1985,
+          "correct": true,
+          "note": "Multiple credential keywords"
+        },
+        {
+          "url": "https://xkcd983274921-secure-node.biz",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Random-looking DGA domain"
+        }
+      ]
+    },
+    "HistGradientBoosting": {
+      "score": "18/18",
+      "accuracy_pct": 100.0,
+      "details": [
+        {
+          "url": "https://youtube.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0001,
+          "legitimate_prob": 0.9999,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://google.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0001,
+          "legitimate_prob": 0.9999,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://facebook.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0001,
+          "legitimate_prob": 0.9999,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://microsoft.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0001,
+          "legitimate_prob": 0.9999,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://apple.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0001,
+          "legitimate_prob": 0.9999,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://amazon.com",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0001,
+          "legitimate_prob": 0.9999,
+          "correct": true,
+          "note": "Major legitimate brand"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Phishing",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0007,
+          "legitimate_prob": 0.9993,
+          "correct": true,
+          "note": "Benign multi-segment path"
+        },
+        {
+          "url": "https://github.com/torvalds/linux",
+          "expected": "Legitimate",
+          "predicted": "Legitimate",
+          "phishing_prob": 0.0004,
+          "legitimate_prob": 0.9996,
+          "correct": true,
+          "note": "Benign developer platform"
+        },
+        {
+          "url": "https://youtubee.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9998,
+          "legitimate_prob": 0.0002,
+          "correct": true,
+          "note": "Typo with extra letter e"
+        },
+        {
+          "url": "https://yooutube.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9999,
+          "legitimate_prob": 0.0001,
+          "correct": true,
+          "note": "Typo with double o"
+        },
+        {
+          "url": "https://gooogle.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9998,
+          "legitimate_prob": 0.0002,
+          "correct": true,
+          "note": "Typo with triple o"
+        },
+        {
+          "url": "https://faceboook.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9998,
+          "legitimate_prob": 0.0002,
+          "correct": true,
+          "note": "Typo with triple o"
+        },
+        {
+          "url": "https://microsoft-login-example.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Brand + hyphen + login keyword"
+        },
+        {
+          "url": "https://youtube-login-example.com",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Brand + hyphen + login keyword"
+        },
+        {
+          "url": "http://192.168.1.100/admin/login.php",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Raw IP address with admin login"
+        },
+        {
+          "url": "http://paypal.com.account-verify-update.security-login.xyz/auth",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Compound deceptive subdomains"
+        },
+        {
+          "url": "https://secure-banking-portal-update.com/signin?session=98213",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 0.9994,
+          "legitimate_prob": 0.0006,
+          "correct": true,
+          "note": "Multiple credential keywords"
+        },
+        {
+          "url": "https://xkcd983274921-secure-node.biz",
+          "expected": "Phishing",
+          "predicted": "Phishing",
+          "phishing_prob": 1.0,
+          "legitimate_prob": 0.0,
+          "correct": true,
+          "note": "Random-looking DGA domain"
+        }
+      ]
+    }
+  },
+  "augmentation_info": {
+    "method": "Balanced Synthetic Domain Augmentation (Training Partition Only)",
+    "synthetic_phish_samples": 833,
+    "synthetic_legit_samples": 2766,
+    "total_train_samples": 84295,
+    "held_out_test_samples": 20175
+  }
+}

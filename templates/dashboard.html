@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PhishGuard User Dashboard — Monitor URL scans, view personal phishing detection statistics, and analyze suspicious links in real time.">
+  <title>Dashboard — PhishGuard</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+
+  <!-- ========================================================= -->
+  <!-- 1. NAVIGATION BAR                                         -->
+  <!-- ========================================================= -->
+  <header class="site-header" id="top">
+    <div class="container nav-container">
+      <!-- Brand Logo / Name -->
+      <a href="/dashboard" class="brand-logo" aria-label="PhishGuard Dashboard">
+        <div class="logo-icon-wrapper">
+          <svg class="logo-shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="brand-text">Phish<span class="brand-highlight">Guard</span></span>
+      </a>
+
+      <!-- Mobile Navigation Hamburger Button -->
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <!-- Navigation Links & User Actions -->
+      <nav class="nav-menu" id="navMenu">
+        <ul class="nav-links">
+          <li><a href="/dashboard" class="nav-link active" id="navDashboardLink">Dashboard</a></li>
+          <li><a href="/scan" class="nav-link" id="navScanLink">Scan URL</a></li>
+          <li><a href="#recent-scans" class="nav-link" id="navHistoryLink">History</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- User Profile Chip -->
+          <div class="user-chip" id="userProfileChip" title="{{ user.email }}">
+            <div class="user-avatar" aria-hidden="true">{{ user.name[:1]|upper }}</div>
+            <div class="user-chip-details">
+              <span class="user-chip-name">{{ user.name }}</span>
+              <span class="user-chip-email">{{ user.email }}</span>
+            </div>
+          </div>
+
+          <!-- Log Out Button -->
+          <a href="/logout" class="btn btn-ghost btn-logout" id="navLogoutBtn">
+            <svg class="btn-icon-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Log Out
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- 2. DASHBOARD MAIN CONTENT                                 -->
+  <!-- ========================================================= -->
+  <main class="dashboard-main">
+    <div class="container dashboard-container">
+
+      <!-- 2.1 WELCOME & HERO BANNER -->
+      <section class="dashboard-welcome-card" id="welcomeSection">
+        <div class="dashboard-welcome-content">
+          <!-- Session Badge -->
+          <div class="session-badge">
+            <span class="auth-badge-dot"></span>
+            <span>Authenticated Session Active</span>
+          </div>
+
+          <!-- Welcome Message -->
+          <h1 class="dashboard-welcome-title">
+            Welcome back, <span class="gradient-text">{{ user.name }}</span>
+          </h1>
+
+          <p class="dashboard-welcome-desc">
+            Monitor and analyze suspicious URLs with PhishGuard.
+          </p>
+
+          <!-- User Meta Bar -->
+          <div class="user-meta-strip">
+            <div class="user-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="meta-icon">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Account: <strong>{{ user.name }}</strong> (ID #{{ user.id }})</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Prominent Quick Action Button -->
+        <div class="dashboard-welcome-action">
+          <a href="/scan" class="btn btn-primary btn-scan-prominent" id="heroScanActionBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Scan a URL
+          </a>
+        </div>
+      </section>
+
+      <!-- 2.2 STATISTICS CARDS (USER-SPECIFIC) -->
+      <section class="dashboard-stats-section" aria-label="Personal Scan Statistics">
+        <div class="dashboard-stats-grid">
+          
+          <!-- Card 1: Total Scans -->
+          <div class="stat-card" id="cardTotalScans">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Total Scans</span>
+              <div class="stat-card-icon icon-cyan" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-number" id="statTotalScans">{{ stats.total_scans }}</div>
+            <p class="stat-desc">Cumulative URLs evaluated by your account</p>
+          </div>
+
+          <!-- Card 2: Phishing Detected -->
+          <div class="stat-card" id="cardPhishingDetected">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Phishing Detected</span>
+              <div class="stat-card-icon icon-danger" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-number stat-danger" id="statPhishingDetected">{{ stats.phishing_detected }}</div>
+            <p class="stat-desc">URLs predicted as phishing</p>
+          </div>
+
+          <!-- Card 3: Legitimate URLs -->
+          <div class="stat-card" id="cardLegitimateUrls">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Legitimate URLs</span>
+              <div class="stat-card-icon icon-success" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-number stat-success" id="statLegitimateUrls">{{ stats.legitimate_urls }}</div>
+            <p class="stat-desc">URLs predicted as legitimate</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 2.3 QUICK ACTION BANNER -->
+      <section class="quick-action-strip" aria-label="Quick Action">
+        <div class="quick-action-info">
+
+          <h2 class="quick-action-title">Ready to analyze a suspicious link?</h2>
+          <p class="quick-action-desc">
+            Submit any URL to evaluate heuristic patterns, character entropy, deceptive subdomains, and redirect behaviors.
+          </p>
+        </div>
+        <div class="quick-action-btn-wrap">
+          <a href="/scan" class="btn btn-primary" id="quickActionScanBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Scan a URL
+          </a>
+        </div>
+      </section>
+
+      <!-- 2.4 RECENT ACTIVITY ("RECENT SCANS") -->
+      <section class="recent-activity-section" id="recent-scans" aria-label="Recent Scans">
+        <div class="recent-header">
+          <div class="recent-title-group">
+            <div class="recent-title-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h2 class="recent-title">Recent Scans</h2>
+              <p class="recent-subtitle">Your personal inspection history (up to 5 most recent scans)</p>
+            </div>
+          </div>
+        </div>
+
+        {% if recent_scans and recent_scans|length > 0 %}
+          <!-- Recent Scans Table (when records exist) -->
+          <div class="recent-table-wrapper">
+            <table class="recent-table" id="scansTable">
+              <thead>
+                <tr>
+                  <th scope="col">URL</th>
+                  <th scope="col">Prediction</th>
+                  <th scope="col">Confidence</th>
+                  <th scope="col">Scanned Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for scan in recent_scans %}
+                <tr>
+                  <td class="url-cell">
+                    <span class="url-text" title="{{ scan.url }}">{{ scan.url }}</span>
+                  </td>
+                  <td>
+                    {% if scan.prediction|lower == 'phishing' %}
+                      <span class="scan-badge badge-threat">
+                        <span class="badge-dot-danger"></span>
+                        Phishing
+                      </span>
+                    {% else %}
+                      <span class="scan-badge badge-safe">
+                        <span class="badge-dot-success"></span>
+                        Legitimate
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="confidence-cell">
+                    {% if scan.confidence is not none %}
+                      {% if scan.confidence <= 1.0 %}
+                        {{ "%.1f"|format(scan.confidence * 100) }}%
+                      {% else %}
+                        {{ "%.1f"|format(scan.confidence) }}%
+                      {% endif %}
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </td>
+                  <td class="date-cell">
+                    {{ scan.scanned_at }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <!-- Empty State (when no scans exist yet) -->
+          <div class="empty-state-box" id="emptyScansState">
+            <div class="empty-state-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <circle cx="12" cy="11" r="3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <h3 class="empty-state-title">No scans yet. Start by scanning a URL.</h3>
+            <p class="empty-state-desc">
+              When you submit web addresses for threat evaluation, your personal detection records, classifications, and confidence scores will be securely cataloged here.
+            </p>
+            <a href="/scan" class="btn btn-secondary-sm empty-state-btn" id="emptyStateScanBtn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Scan a URL
+            </a>
+          </div>
+        {% endif %}
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- 3. FOOTER                                                 -->
+  <!-- ========================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p class="copyright-text" style="text-align: center;">
+        &copy; 2026 PhishGuard — Phishing URL Detection
+      </p>
+    </div>
+  </footer>
+
+  <!-- Interactive Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const navMenu = document.getElementById('navMenu');
+      if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+          const isOpen = navMenu.classList.toggle('open');
+          mobileMenuBtn.classList.toggle('active');
+          mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+        });
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+          if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            navMenu.classList.remove('open');
+            mobileMenuBtn.classList.remove('active');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

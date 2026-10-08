@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PhishGuard URL Scanner — Analyze website links for potential phishing threats through passive structural and lexical evaluation.">
+  <title>Scan a URL — PhishGuard</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="scanner-body">
+
+  <!-- ========================================================= -->
+  <!-- 1. NAVIGATION BAR                                         -->
+  <!-- ========================================================= -->
+  <header class="site-header" id="top">
+    <div class="container nav-container">
+      <!-- Brand Logo / Name -->
+      <a href="/dashboard" class="brand-logo" aria-label="PhishGuard Dashboard">
+        <div class="logo-icon-wrapper">
+          <svg class="logo-shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="brand-text">Phish<span class="brand-highlight">Guard</span></span>
+      </a>
+
+      <!-- Mobile Navigation Hamburger Button -->
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <!-- Navigation Links & User Actions -->
+      <nav class="nav-menu" id="navMenu">
+        <ul class="nav-links">
+          <li><a href="/dashboard" class="nav-link" id="navDashboardLink">Dashboard</a></li>
+          <li><a href="/scan" class="nav-link active" id="navScanLink">Scan URL</a></li>
+          <li><a href="/dashboard#recent-scans" class="nav-link" id="navHistoryLink">History</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- User Profile Chip -->
+          <div class="user-chip" id="userProfileChip" title="{{ user.email }}">
+            <div class="user-avatar" aria-hidden="true">{{ user.name[:1]|upper }}</div>
+            <div class="user-chip-details">
+              <span class="user-chip-name">{{ user.name }}</span>
+              <span class="user-chip-email">{{ user.email }}</span>
+            </div>
+          </div>
+
+          <!-- Log Out Button -->
+          <a href="/logout" class="btn btn-ghost btn-logout" id="navLogoutBtn">
+            <svg class="btn-icon-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Log Out
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- 2. MAIN URL SCANNER SECTION                               -->
+  <!-- ========================================================= -->
+  <main class="scanner-main">
+    <div class="container scanner-container">
+
+      <!-- Back to Dashboard Navigation Link -->
+      <div class="scanner-nav-top">
+        <a href="/dashboard" class="back-link" id="backToDashboardBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Dashboard
+        </a>
+      </div>
+
+      <!-- Page Heading & Explanation -->
+      <section class="scanner-header">
+        <h1 class="scanner-title">Scan a URL</h1>
+        <p class="scanner-desc">
+          Enter a website URL to analyze it for potential phishing characteristics.
+        </p>
+      </section>
+
+      <!-- Alert Notification Area (Server-side validation errors) -->
+      {% if error %}
+      <div class="form-alert alert-danger visible" id="scanAlert" role="alert">
+        <svg class="form-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="scanAlertText">{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <!-- ML Analysis Result Card (shown after successful URL analysis) -->
+      {% if result %}
+      <section class="scanner-result-card {% if result.prediction == 'Phishing' %}result-threat{% else %}result-safe{% endif %}" id="scanResultCard">
+        <div class="result-header">
+          <div class="result-icon-wrap" aria-hidden="true">
+            {% if result.prediction == 'Phishing' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            {% else %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+            {% endif %}
+          </div>
+          <div>
+            <div class="result-status-badge {% if result.prediction == 'Phishing' %}badge-threat-glow{% else %}badge-safe-glow{% endif %}">
+              <span class="{% if result.prediction == 'Phishing' %}badge-dot-danger{% else %}badge-dot-success{% endif %}"></span>
+              <span>Verdict: {{ result.prediction }}</span>
+            </div>
+            <h2 class="result-title">
+              {% if result.prediction == 'Phishing' %}
+                Model Prediction: Phishing ({{ result.confidence_percentage }} Confidence)
+              {% else %}
+                Model Prediction: Legitimate ({{ result.confidence_percentage }} Confidence)
+              {% endif %}
+            </h2>
+            <p class="result-subtitle-meta">
+              Saved to your Dashboard Scan History
+            </p>
+          </div>
+        </div>
+
+        <!-- Submitted URL Safe Display Box (Jinja auto-escaped) -->
+        <div class="submitted-url-box">
+          <div class="submitted-url-label">Submitted Target URL</div>
+          <div class="submitted-url-val" id="submittedUrlDisplay">{{ submitted_url }}</div>
+        </div>
+
+        <!-- Probability Breakdown Bar -->
+        {% if result.probabilities %}
+        <div class="probability-breakdown-box">
+          <div class="prob-header">
+            <span>Model Probability Breakdown</span>
+            <span>Phishing: <strong>{{ "%.1f"|format(result.probabilities.phishing * 100) }}%</strong> &bull; Legitimate: <strong>{{ "%.1f"|format(result.probabilities.legitimate * 100) }}%</strong></span>
+          </div>
+          <div class="prob-bar-track">
+            <div class="prob-bar-fill-phishing" style="width: {{ result.probabilities.phishing * 100 }}%;"></div>
+            <div class="prob-bar-fill-legit" style="width: {{ result.probabilities.legitimate * 100 }}%;"></div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Feature Characteristics Breakdown Grid -->
+        {% if result.features %}
+        <div class="extracted-features-section">
+          <div class="features-header-title">Extracted URL Characteristics (Passive Analysis)</div>
+          <div class="features-summary-grid">
+            <div class="feature-chip">
+              <span class="feature-chip-label">URL Length</span>
+              <span class="feature-chip-val">{{ result.features.url_length }} chars</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">Entropy</span>
+              <span class="feature-chip-val">{{ "%.2f"|format(result.features.url_entropy) }} bits</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">Subdomains</span>
+              <span class="feature-chip-val">{{ result.features.subdomain_count }}</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">Dots in URL</span>
+              <span class="feature-chip-val">{{ result.features.dot_count }}</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">Digits</span>
+              <span class="feature-chip-val">{{ result.features.number_of_digits }}</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">Hyphen in Domain</span>
+              <span class="feature-chip-val {% if result.features.has_hyphen_in_domain %}text-amber{% endif %}">{{ "Yes" if result.features.has_hyphen_in_domain else "No" }}</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">Dangerous Ext</span>
+              <span class="feature-chip-val {% if result.features.suspicious_file_extension %}text-danger{% endif %}">{{ "Detected" if result.features.suspicious_file_extension else "None" }}</span>
+            </div>
+            <div class="feature-chip">
+              <span class="feature-chip-label">TLD Popularity</span>
+              <span class="feature-chip-val">{{ "Common (.com/.net/.org)" if result.features.tld_popularity else "Specialized" }}</span>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Passive Inspection & Disclaimer Notice -->
+        <div class="safety-notice-box">
+          <div class="safety-notice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <div class="safety-notice-text">
+            <strong>Statistical Heuristic Estimate:</strong> {{ result.disclaimer }} PhishGuard never opens, crawls, or executes payload code on the target server.
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="result-actions">
+          <a href="/scan" class="btn btn-primary" id="scanAnotherBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Scan Another URL
+          </a>
+          <a href="/dashboard" class="btn btn-secondary" id="returnDashboardBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            View in Dashboard
+          </a>
+        </div>
+      </section>
+      {% endif %}
+
+      <!-- URL Input Card -->
+      <section class="scanner-card" id="scannerInputSection">
+        <form action="/scan" method="POST" class="scanner-form" id="scanForm" novalidate>
+          <label for="urlInput" class="scanner-input-label">Website URL Address</label>
+          
+          <div class="scanner-input-wrapper">
+            <!-- URL Input Box (ensures icon remains vertically centered inside input on all viewports) -->
+            <div class="url-input-box">
+              <!-- Icon -->
+              <div class="url-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+              </div>
+
+              <!-- Input Field -->
+              <input 
+                type="text" 
+                name="url" 
+                id="urlInput" 
+                class="url-input-field" 
+                placeholder="Enter a URL (e.g. youtube.com or https://youtube.com)" 
+                value="{{ submitted_url }}" 
+                autocomplete="off" 
+                spellcheck="false" 
+                required
+                aria-label="Website URL to scan"
+              >
+            </div>
+
+            <!-- Scan Button -->
+            <button type="submit" class="btn btn-primary btn-scan-submit" id="scanSubmitBtn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Scan URL
+            </button>
+          </div>
+
+          <!-- Helper Strip -->
+          <div class="url-helper-strip">
+            <span class="url-formats-hint">
+              <strong>Supported formats:</strong> youtube.com &bull; www.youtube.com &bull; https://youtube.com &bull; http://example.com/path
+            </span>
+          </div>
+        </form>
+      </section>
+
+      <!-- Security & Technical Analysis Information Pillars -->
+      <section class="scanner-pillars-grid" aria-label="Detection Methodology">
+        <div class="scanner-pillar-card">
+          <div class="pillar-icon-box icon-cyan" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 7 4 4 20 4 20 7"></polyline>
+              <line x1="9" y1="20" x2="15" y2="20"></line>
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+            </svg>
+          </div>
+          <h3 class="pillar-title">1. Lexical Inspection</h3>
+          <p class="pillar-desc">
+            Evaluates URL length, subdomain count, hyphen density, and character distribution patterns commonly abused by attackers.
+          </p>
+        </div>
+
+        <div class="scanner-pillar-card">
+          <div class="pillar-icon-box icon-indigo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+          </div>
+          <h3 class="pillar-title">2. Domain Analysis</h3>
+          <p class="pillar-desc">
+            Examines IP-based URLs, suspicious top-level domains (TLDs), and deceptive brand impersonation attempts.
+          </p>
+        </div>
+
+        <div class="scanner-pillar-card">
+          <div class="pillar-icon-box icon-emerald" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <h3 class="pillar-title">3. Safe Offline Processing</h3>
+          <p class="pillar-desc">
+            Safeguards user systems by never visiting, fetching, or executing code from potentially malicious destination servers.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- 3. FOOTER                                                 -->
+  <!-- ========================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p class="copyright-text" style="text-align: center;">
+        &copy; 2026 PhishGuard — Phishing URL Detection
+      </p>
+    </div>
+  </footer>
+
+  <!-- Interactive Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const navMenu = document.getElementById('navMenu');
+      if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+          const isOpen = navMenu.classList.toggle('open');
+          mobileMenuBtn.classList.toggle('active');
+          mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            navMenu.classList.remove('open');
+            mobileMenuBtn.classList.remove('active');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      // Automatically focus the URL input if no result is displayed
+      const urlInput = document.getElementById('urlInput');
+      const resultCard = document.getElementById('scanResultCard');
+      if (urlInput && !resultCard) {
+        urlInput.focus();
+      }
+
+      // Form submission handling: prevent duplicate requests on rapid or repeated clicks
+      const scanForm = document.getElementById('scanForm');
+      const scanSubmitBtn = document.getElementById('scanSubmitBtn');
+      if (scanForm && scanSubmitBtn) {
+        let isSubmitting = false;
+
+        scanForm.addEventListener('submit', (e) => {
+          if (isSubmitting) {
+            e.preventDefault();
+            return false;
+          }
+
+          const rawVal = urlInput ? urlInput.value.trim() : '';
+          if (!rawVal) {
+            return;
+          }
+
+          isSubmitting = true;
+          scanSubmitBtn.classList.add('is-loading');
+
+          // Asynchronously disable button so browser initiates submission without cancellation
+          setTimeout(() => {
+            scanSubmitBtn.disabled = true;
+            scanSubmitBtn.style.opacity = '0.75';
+            scanSubmitBtn.style.cursor = 'not-allowed';
+          }, 0);
+        });
+
+        scanSubmitBtn.addEventListener('click', (e) => {
+          if (isSubmitting) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

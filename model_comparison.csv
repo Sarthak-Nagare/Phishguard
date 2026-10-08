@@ -1,0 +1,4 @@
+Model Candidate,Test Accuracy (%),Phishing Precision (%),Phishing Recall (%),Phishing F1 (%),ROC-AUC,False Negatives,False Positives,Unseen 18-URL Score,Train Time (s)
+Logistic Regression,99.817,99.898,99.811,99.854,0.999938,24,13,16/18,0.479
+Random Forest,99.96,99.953,99.984,99.969,0.999998,2,6,18/18,2.217
+HistGradientBoosting,99.97,99.961,99.992,99.976,0.999995,1,5,18/18,2.317

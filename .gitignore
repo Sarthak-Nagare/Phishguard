@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases
+phishguard.db
+*.db
+*.sqlite3
+*.db-journal
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
