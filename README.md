@@ -192,8 +192,10 @@ This script will:
 
 ## Database Architecture
 
-- **Local Development**: PhishGuard uses SQLite (`phishguard.db`). Tables (`users`, `scan_history`) and indexes are created automatically on application startup via `database.init_db()`.
-- **Production Deployment**: A production-grade relational database such as PostgreSQL will be configured separately during deployment. Database access functions are centralized in `database.py` to facilitate straightforward environment-based connection adaptation.
+- **Dual-Backend Support**: PhishGuard supports both SQLite and PostgreSQL through `database.py`:
+  - **Local Development**: When `DATABASE_URL` is omitted, PhishGuard automatically defaults to SQLite (`phishguard.db`). Tables (`users`, `scan_history`) and indexes are created automatically on startup.
+  - **Production Deployment (Vercel + Supabase)**: When `DATABASE_URL` is configured in the environment, PhishGuard connects to Supabase PostgreSQL using `psycopg` with `row_factory=dict_row`.
+- **Serverless-Safe Connection Management**: Connections are established on demand and closed per operation to prevent socket leaks or connection exhaustion on serverless platforms (Vercel) when paired with the Supabase Transaction Pooler (PgBouncer, port 6543).
 
 ---
 

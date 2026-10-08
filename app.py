@@ -307,7 +307,7 @@ def register():
                 message=success_message
             ), 200
 
-    except sqlite3.IntegrityError:
+    except (sqlite3.IntegrityError, database.IntegrityError):
         err_msg = 'An account with this email address already exists. Please log in.'
         if is_ajax:
             return jsonify({
@@ -323,7 +323,7 @@ def register():
                 success=False
             ), 400
 
-    except sqlite3.Error:
+    except (sqlite3.Error, database.DatabaseError):
         # Never expose internal database error details to the user
         err_msg = 'A database error occurred while creating your account. Please try again later.'
         if is_ajax:
